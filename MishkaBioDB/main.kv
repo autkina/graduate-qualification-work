@@ -1,0 +1,560 @@
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+<InputText@MDTextField>:
+    multiline: False
+    size_hint: None, None
+    size: dp((210 * 160) / app.dpi), dp((80 * 160) / app.dpi)
+    line_width: dp(3)
+
+<ButtonBack@Button>: #кнопка назад
+    pos_hint: {'center_x':.1, 'center_y':.96}
+    background_color: 0, 0, 0, 0
+    size_hint_x: None
+    size_hint_y: None
+    width: 60
+    height: 60
+
+<ButtonHelp@Button>: #кнопка помощи
+    pos_hint: {'center_x':.80, 'center_y':.09}
+    background_color: 0, 0, 0, 0
+    size_hint_x: None
+    size_hint_y: None
+    width: 110
+    height: 120
+
+<TranspButton@Button>: #прозрачные кнопки
+    background_color: 0, 0, 0, 0
+    size: (120, 50)
+    size_hint: None, None
+
+<BottomBtns@FloatLayout>: #панель навигации по постоянным окнам
+    TranspButton:
+        pos_hint: {'center_x':.15, 'center_y':.03}
+        on_release: self.parent.parent.parent.manager.current = 'help'
+    TranspButton:
+        pos_hint: {'center_x':.5, 'center_y':.03}
+        on_release: self.parent.parent.parent.parent.acc_type_screen()
+    TranspButton:
+        pos_hint: {'center_x':.85, 'center_y':.03}
+        on_release: self.parent.parent.parent.manager.current  = 'user'
+
+<RootScreen>:
+    transition: FadeTransition()
+    initial: 'Page1'
+    Page1:  #стартовая страница
+    LoadPage: #экран загрузки
+    EnterReg:  #экран входа
+    RegPage:  #экран регистрации
+    UserPage: #экран пользователя
+    HelpPage: #экран помощи
+    StudPage: #экран студента
+    LectPage: #экран преподавателя
+    Modules: #экран модулей
+    Module1: #экран модуля 1
+    LectModule: #модуль управления группами
+    FillStudentsPage: #модуль студентов (группа)
+    GroupAccess:  #модуль студентов (доступ)
+
+<Page1>:
+    name: 'start'
+    FloatLayout:
+        Image: # фон
+            source: 'MTest/Page1.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+            keep_data: True
+            mipmap: False
+        JustLabel:
+            text: 'ВЫБЕРИТЕ ПОДКЛЮЧЕНИЕ'
+            pos_hint: {'center_x':.5, 'center_y':.65}
+        ButtonLabelMed:
+            text: '[font=MTest/Montserrat-Bold.ttf]С[/font] ИНТЕРНЕТОМ'
+            pos_hint: {'center_x':.5, 'center_y':.50}
+            on_release: root.manager.current = 'load'
+        ButtonLabelMed:
+            text: '[font=MTest/Montserrat-Bold.ttf]БЕЗ[/font] ИНТЕРНЕТА'
+            pos_hint: {'center_x':.5, 'center_y':.36}
+            on_release: root.manager.current = 'user'
+        ButtonHelp:
+            on_release: root.manager.current = 'enterreg'
+
+
+<LoadPage>:
+    name: 'load'
+    FloatLayout:
+        Image: # фон
+            source: 'MTest/LoadPage.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+        ButtonBack: #кнопка назад
+            on_release: root.manager.current  = 'start'
+        Label:
+            text: '[color=2c3939]Выполняется подключение...[/color]'
+            font_size: 20
+            font_name: app.Mtext_med
+            markup: True
+            text_size: 210, None
+            pos_hint: {'center_x':.5, 'center_y':.92}
+            halign: 'center'
+            valign: 'top'
+            canvas.before:
+                Color:
+                    rgba: app.light_green
+        Image:
+            source: 'MTest/loadgif.png'
+            pos_hint: {'center_x':.5, 'center_y':.5}
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: root.angle
+                    axis: 0, 0, 1
+                    origin: root.center
+            canvas.after:
+                PopMatrix
+        ButtonHelp:
+            on_release: root.manager.current  = 'start'
+
+
+<EnterReg>:
+    name: 'enterreg'
+    FloatLayout:
+        Image: # фон
+            source: 'MTest/Page2.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+        JustLabel:
+            text: 'ВВЕДИТЕ\nЛОГИН И ПАРОЛЬ'
+            pos_hint: {'center_x':.5, 'center_y':.73}
+        SmallLabel:
+            text: 'логин'
+            pos_hint: {'center_x':.45, 'center_y':.63}
+        MDTextField:
+            id: input_login
+            pos_hint: {'center_x':.5, 'center_y':.60}
+            multiline: False
+            size_hint: None, None
+            size: dp((210 * 160) / app.dpi), dp((80 * 160) / app.dpi)
+            max_text_length: 30
+            theme_line_height: 'Custom'
+            theme_line_width: 'Custom'
+        SmallLabel:
+            text: 'пароль'
+            pos_hint: {'center_x':.45, 'center_y':.53}
+        MDTextField:
+            id: input_passw
+            password: True
+            multiline: False
+            pos_hint: {'center_x':.5, 'center_y':.50}
+            size_hint: None, None
+            size: dp((210 * 160) / app.dpi), dp((80 * 160) / app.dpi)
+            line_width: dp(3)
+            max_text_length: 30
+        ButtonLabel:
+            text: 'ВОЙТИ'
+            pos_hint: {'center_x':.5, 'center_y':.39}
+            on_release: root.on_validation()
+        SmallButtonLabel:
+            text: 'гостевой режим'
+            pos_hint: {'center_x':.5, 'center_y':.27}
+            on_release: root.on_guest()
+        SmallButtonLabel:
+            text: 'регистрация'
+            pos_hint: {'center_x':.5, 'center_y':.22}
+            on_release: root.manager.current  = 'reg'
+        SmallButtonLabel:
+            text: 'забыли пароль?'
+            pos_hint: {'center_x':.5, 'center_y':.17}
+            on_release: root.forget_password()
+        ButtonBack: #кнопка назад
+            on_release: root.manager.current  = 'start'
+        ButtonHelp: #кнопка помощи
+            on_release: root.manager.current  = 'help'
+
+
+<RegPage>:
+    name: 'reg'
+    FloatLayout:
+        Image: # фон
+            source: 'MTest/Page2.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+        JustLabel:
+            text: 'РЕГИСТРАЦИЯ'
+            pos_hint: {'center_x':.5, 'center_y':.73}
+        SmallLabel:
+            text: 'придумайте логин'
+            pos_hint: {'center_x':.45, 'center_y':.63}
+        MDTextField:
+            id: input_login
+            pos_hint: {'center_x':.5, 'center_y':.60}
+            multiline: False
+            size_hint: None, None
+            size: dp((210 * 160) / app.dpi), dp((80 * 160) / app.dpi)
+            max_text_length: 30
+            theme_line_height: 'Custom'
+            theme_line_width: 'Custom'
+        SmallLabel:
+            text: 'придумайте пароль'
+            pos_hint: {'center_x':.45, 'center_y':.53}
+        MDTextField:
+            id: input_passw
+            password: True
+            multiline: False
+            pos_hint: {'center_x':.5, 'center_y':.50}
+            size_hint: None, None
+            size: dp((210 * 160) / app.dpi), dp((80 * 160) / app.dpi)
+            line_width: dp(3)
+            max_text_length: 30
+        SmallLabel:
+            text: 'повторите пароль'
+            pos_hint: {'center_x':.45, 'center_y':.43}
+        MDTextField:
+            id: copy_passw
+            password: True
+            multiline: False
+            pos_hint: {'center_x':.5, 'center_y':.40}
+            size_hint: None, None
+            size: dp((210 * 160) / app.dpi), dp((80 * 160) / app.dpi)
+            line_width: dp(3)
+            max_text_length: 30
+        ButtonLabel:
+            text: 'ЗАРЕГИСТРИРОВАТЬСЯ'
+            pos_hint: {'center_x':.5, 'center_y':.28}
+            on_release: root.on_validation()
+        ButtonBack: #кнопка назад
+            on_release: root.manager.current  = 'load'
+        ButtonHelp: #кнопка помощи
+            on_release: root.manager.current  = 'help'
+
+
+<UserPage>:
+    name: 'user'
+    FloatLayout:
+        Image: # фон
+            source: 'MTest/UserPage.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+        Button:
+            size: (97, 97)
+            background_normal:'MTest/userphoto.png'
+            size_hint: None, None
+            pos_hint: {'center_x':.15, 'center_y':.87}
+        Button:
+            id: btn_exit
+            size: (44, 44)
+            background_normal:'MTest/exit.png'
+            size_hint: None, None
+            pos_hint: {'center_x':.85, 'center_y':.87}
+            on_release: root.on_btn_exit()
+        NameInfoLabel:
+            id: last_name
+            text: 'Имя\nФамилия'
+            pos_hint: {'center_x':.4, 'center_y':.75}
+        InfoLabel:
+            id: info_1           
+            text_size: 330, None
+            text: 'Данные о пользователе 1'    
+            pos_hint: {'center_x':.4, 'center_y':.64}
+        InfoLabel:
+            id: info_2
+            text_size: 330, None
+            text: 'Данные о пользователе 2'    
+            pos_hint: {'center_x':.4, 'center_y':.56}
+        InfoLabel:
+            id: info_3
+            text_size: 330, None
+            text: 'Данные о пользователе 3'    
+            pos_hint: {'center_x':.4, 'center_y':.48}
+        HelpLabel:
+            text: 'Обратиться к администратору'
+            pos_hint: {'center_x':.4, 'center_y':.09}
+            on_release: root.manager.current = 'help'
+        BottomBtns
+            
+
+<HelpPage>:
+    name: 'help'
+    FloatLayout:
+        Image:
+            source: 'MTest/HelpPage.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1    
+        Label:
+            text: 'тут страничка помощи'
+            color: app.dark_green
+            font_size: 29
+            font_name: app.Mtext_med        
+            text_size: 360, None
+            pos_hint: {'center_x':.5, 'center_y':.87}
+            halign: 'center'
+            valign: 'top'
+        Label:
+            text: 'будет расписано, что за модуль и какие есть возможности\n\n\n но пока держите мемы'
+            color: app.dark_green
+            font_size: 24
+            font_name: app.Mtext_reg        
+            text_size: 360, None
+            pos_hint: {'center_x':.5, 'center_y':.73}
+            halign: 'center'
+            valign: 'top'
+        Button:
+            size: (330, 345)
+            background_normal:'MTest/memes.png'
+            size_hint: None, None
+            pos_hint: {'center_x':.5, 'center_y':.4}
+        BottomBtns
+        ButtonBack: #кнопка назад
+            on_release: root.manager.current  = 'user'
+
+<StudPage>:
+    name: 'stud'
+    FloatLayout:
+        Image: # фон
+            source: 'MTest/Page4_lect.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+        ButtonLabelMed:
+            text: '[font=MTest/Montserrat-SemiBold.ttf]ИНСТРУМЕНТЫ[/font]'
+            pos_hint: {'center_x':.5, 'center_y':.24}
+            on_release: root.manager.current = 'modules'
+        BottomBtns
+        ButtonBack: #кнопка назад
+            on_release: root.manager.current  = 'enterreg'
+
+<LectPage>:
+    name: 'lect'
+    FloatLayout:
+        Image: # фон
+            source: 'MTest/Page4_lect.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+        ButtonLabelMed:
+            id: btn_manage
+            disabled: True
+            text: '[font=MTest/Montserrat-SemiBold.ttf]УПРАВЛЕНИЕ[/font]'            
+            pos_hint: {'center_x':.5, 'center_y':.40}
+            on_release: root.manager.current = 'lectModules'
+        ButtonLabelMed:
+            text: '[font=MTest/Montserrat-SemiBold.ttf]ИНСТРУМЕНТЫ[/font]'
+            pos_hint: {'center_x':.5, 'center_y':.24}
+            on_release: root.manager.current = 'modules'
+        BottomBtns
+        ButtonBack: #кнопка назад
+            on_release: root.manager.current  = 'enterreg'
+
+<Modules>:
+    name: 'modules'
+    FloatLayout:
+        Image:
+            source: 'MTest/Page5_all.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+        Label:
+            text: 'Выберите инструмент\nдля работы'
+            pos_hint: {'center_x': .5, 'center_y': .87}
+            halign: 'center'
+            font_size: 27
+            color: app.dark_green
+            font_name: app.Mtext_semibold
+        ModuleButtonLabel:
+            id: btn_mod_1
+            text: "Модуль №1\nв разработке"
+            text_size: 285, 77
+            halign: 'center'
+            on_release: root.choose_module(i = 1)
+            pos_hint: {'center_x': .5, 'center_y': .72}
+            disabled: True
+        ModuleButtonLabel:
+            id: btn_mod_2
+            text: "Модуль №2\nв разработке"
+            text_size: 285, 77
+            halign: 'center'
+            on_release: root.choose_module(i = 2)
+            pos_hint: {'center_x': .5, 'center_y': .59}
+            disabled: True
+        ModuleButtonLabel:
+            id: btn_mod_3
+            text: "Модуль №3\nв разработке"
+            text_size: 285, 77
+            halign: 'center'
+            on_release: root.choose_module(i = 3)
+            pos_hint: {'center_x': .5, 'center_y': .46}
+            disabled: True
+        ModuleButtonLabel:
+            id: btn_mod_4
+            text: "Модуль №4\nв разработке"
+            text_size: 285, 77
+            halign: 'center'
+            on_release: root.choose_module(i = 4)
+            pos_hint: {'center_x': .5, 'center_y': .32}
+            disabled: True
+        ModuleButtonLabel:
+            id: btn_mod_5
+            text: "Модуль №5\nв разработке"
+            text_size: 285, 77
+            halign: 'center'
+            on_release: root.choose_module(i = 5)
+            disabled: True
+            pos_hint: {'center_x': .5, 'center_y': .19}
+        BottomBtns
+        ButtonBack: #кнопка назад
+            on_release: root.manager.acc_type_screen()
+
+
+<LectModule>:
+    name: 'lectModules'
+    FloatLayout:
+        Image: # фон
+            source: 'MTest/Page5_lect.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+        ButtonLabelMed:
+            text: '[font=MTest/Montserrat-SemiBold.ttf]ГРУППЫ СТУДЕНТОВ[/font]'
+            text_size: 180, None
+            pos_hint: {'center_x':.5, 'center_y':.58}
+            on_release: root.manager.current = 'fillstudents'
+        ButtonLabelMed:
+            text: '[font=MTest/Montserrat-SemiBold.ttf]ДОСТУП\nК ПРИЛОЖЕНИЮ[/font]'
+            text_size: 250, None
+            pos_hint: {'center_x':.5, 'center_y':.42}
+            on_release: root.manager.current = 'groupaccess'
+        BottomBtns
+        ButtonBack: #кнопка назад
+            on_release: root.manager.current  = 'modules'
+
+<FillStudentsPage>:
+    name: 'fillstudents'
+    FloatLayout:
+        Image: # фон
+            source: 'MTest/Page6.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+        JustLabel:
+            text: '[color=2c3939]ДОБАВЬТЕ\nГРУППУ СТУДЕНТОВ[/color]'
+            pos_hint: {'center_x':.5, 'center_y':.73}
+        SmallLabel:
+            text: '[color=9ca39a]название группы[/color]'
+            pos_hint: {'center_x':.5, 'center_y':.63}
+        InputText:
+            id: group_name
+            pos_hint: {'center_x':.5, 'center_y':.60}
+            max_text_length: 30
+        SmallLabel:
+            text: '[color=9ca39a]список группы[/color]'
+            pos_hint: {'center_x':.5, 'center_y':.53}
+        MDTextField:
+            id: students_list
+            max_height: '195dp'
+            size_hint_x: None 
+            width: '290dp'            
+            multiline: True
+            pos_hint: {'center_x':.5, 'center_y':.37}
+            mode: 'rectangle'
+        ButtonLabel:
+            id: btn_send
+            text: 'ОТПРАВИТЬ'
+            pos_hint: {'center_x':.5, 'center_y':.17}
+            on_release: root.on_group_of_students()
+        BottomBtns
+        ButtonBack: #кнопка назад
+            on_release: root.manager.current  = 'lectModules'
+
+<GroupAccess>:
+    name: 'groupaccess'
+    FloatLayout:
+        Image: # фон
+            source: 'MTest/Page6.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+        JustLabel:
+            text: 'ГРУППА'
+            pos_hint: {'center_x':.5, 'center_y':.77}
+        Button:
+            id: btn_groups
+            size: (300, 30)
+            color: app.dark_green
+            text_size: (200, None)
+            on_release: root.dropdown_groups_click()
+            background_normal:'MTest/fullcombobutton.png'
+            size_hint: None, None
+            pos_hint: {'center_x': .5, 'center_y': .7}
+            shorten: True
+            shorten_from: 'right'
+        JustLabel:
+            text: 'ИНСТРУМЕНТ'
+            pos_hint: {'center_x':.5, 'center_y':.61}
+        Button:
+            id: btn_modules
+            size: (300, 30)
+            color: app.dark_green
+            text_size: (200, None)
+            on_release: root.dropdown_modules_click()
+            background_normal:'MTest/fullcombobutton.png'
+            size_hint: None, None
+            pos_hint: {'center_x': .5, 'center_y': .54}
+            shorten: True
+            shorten_from: 'right'
+        JustLabel:
+            text: 'ДОСТУП'
+            pos_hint: {'center_x':.5, 'center_y':.43}
+        ToggleButton:
+            id: btn1
+            disabled: True
+            size_hint: None, None
+            pos_hint: {'center_x':.35, 'center_y':.35}
+            size: (150, 30)
+            text: 'закрыть'
+            state: 'down'
+            font_size: 17
+            on_release: root.toggle(i = 1)
+            font_name: app.Mtext_med
+            color: app.ghosty_green if self.state == 'normal' else 'white'
+            background_normal: ''
+            background_color: 'white' if self.state == 'normal' else app.dark_green
+            background_down: ''
+            canvas.before:
+                Color:
+                    rgba: app.dark_green
+                Line:
+                    width: dp(2)
+                    rectangle: (self.x, self.y, self.width, self.height)
+        ToggleButton:
+            id: btn2
+            disabled: True
+            size_hint: None, None
+            pos_hint: {'center_x':.65, 'center_y':.35}
+            size: (150, 30)
+            text: 'открыть'
+            font_size: 17
+            on_release: root.toggle(i = 2)
+            font_name: app.Mtext_med
+            color: app.ghosty_green if self.state == 'normal' else 'white'
+            background_normal: ''
+            background_color: 'white' if self.state == 'normal' else app.dark_green
+            background_down: ''
+            canvas.before:
+                Color:
+                    rgba: app.dark_green
+                Line:
+                    width: dp(2)
+                    rectangle: (self.x, self.y, self.width, self.height)
+        ButtonLabel:
+            text: 'СОХРАНИТЬ\nИЗМЕНЕНИЯ'
+            text_size: 150, None
+            pos_hint: {'center_x':.5, 'center_y':.22}
+            on_release: root.start_dialog_OK(self)
+        BottomBtns
+        ButtonBack: #кнопка назад
+            on_release: root.manager.current  = 'lectModules'
